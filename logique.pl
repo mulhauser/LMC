@@ -1,5 +1,5 @@
 % Mulhauser remy
-% Wolkowicz michel
+%     zaz  Wolkowicz michel
 
 :- op(20,xfy,?=).
 

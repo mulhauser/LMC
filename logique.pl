@@ -38,7 +38,7 @@ regle(X ?= T,rename) :- var(X), var(T),!.
 % Simplify {x ?= t}∪P′; S -> P′[x/t]; S[x/t]∪{x=t} si t est une constante
 regle(X ?= T,simplify) :- var(X),!.
 
-
+/Users/mulhauser/Documents/LMC/LMC/logique.pl
 
 
 

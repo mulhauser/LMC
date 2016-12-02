@@ -32,18 +32,26 @@ echo(_).
 % de la règle de transformation R à l’équation E.
 
 
-% Rename {x ?= t}∪P′; S -> P′[x/t]; S[x/t]∪{x=t} si t est une variable
-regle(X ?= T,rename) :- var(X), var(T),!.
+% Rename {x ?= t}∪P′;S -> P′[x/t];S[x/t]∪{x=t} si t est une variable
+regle(_?= T,rename) :- var(T),!.
 
-% Simplify {x ?= t}∪P′; S -> P′[x/t]; S[x/t]∪{x=t} si t est une constante
-regle(X ?= T,simplify) :- var(X),!.
+% Simplify {x ?= t}∪P′;S -> P′[x/t];S[x/t]∪{x=t} si t est une constante
+regle(X ?= T,simplify) :- var(X), nonvar(T),!.
+% Revoir plus tard pour atomic(T)
 
-/Users/mulhauser/Documents/LMC/LMC/logique.pl
+% Expand {x ?= t}∪P′;S -> P′[x/t];S[x/t]∪{x=t} si t est composé et x n’apparaît pas dans t
+%regle(X ?= T,expand) :- compound(T),var(X),not(occur_check(X,T)),!.
+% FAIRE occur_check
 
+% Check {x?=t}∪P′;S->⊥ si w!=t et x apparaît dans t
+% FAIRE occur_check
 
+% Orient {?=x}∪P′;S->{x=?t}∪P′;S si t n’est pas une variable
+regle(T?=_,orient) :- nonvar(T),!.
 
+% Decompose {f(s,···,s)?=f(t,···,t)}∪P′;S->{s?=t,···,s?=t}∪P′;S
+regle((X ?= T), decompose) :- compound(X), compound(T), functor(X, N1, NB1), functor(T, N2, NB2), N1 == N2, NB1 == NB2,!.
 
-
-
-
-
+% Clash {f(s,···,s)?=g(t,···,t)}∪P′;S->⊥ si f!=g ou m!=n
+regle((X ?= T), clash) :- compound(X), compound(T), functor(X, N1, NB1), functor(T, N2, NB2), not(N1 == N2), !;
+     not(NB1 == NB2), !.

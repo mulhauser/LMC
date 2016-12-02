@@ -31,20 +31,21 @@ echo(_).
 % reduit(R,E,P,Q) : transforme le système d’équations P en le système d’équations Q par application
 % de la règle de transformation R à l’équation E.
 
+% occur_check(V,T) : teste si la variable V apparaît dans le terme T.
+occur_check(V,T) :- var(V),contains_var(V,T).
 
 % Rename {x ?= t}∪P′;S -> P′[x/t];S[x/t]∪{x=t} si t est une variable
 regle(_?= T,rename) :- var(T),!.
 
 % Simplify {x ?= t}∪P′;S -> P′[x/t];S[x/t]∪{x=t} si t est une constante
-regle(X ?= T,simplify) :- var(X), nonvar(T),!.
+regle(X ?= T,simplify) :- var(X), atomic(T),!.
 % Revoir plus tard pour atomic(T)
 
 % Expand {x ?= t}∪P′;S -> P′[x/t];S[x/t]∪{x=t} si t est composé et x n’apparaît pas dans t
-%regle(X ?= T,expand) :- compound(T),var(X),not(occur_check(X,T)),!.
-% FAIRE occur_check
+regle(X ?= T,expand) :- compound(T),var(X),not(occur_check(X,T)),!.
 
-% Check {x?=t}∪P′;S->⊥ si w!=t et x apparaît dans t
-% FAIRE occur_check
+% Check {x?=t}∪P′;S->⊥ si x!=t et x apparaît dans t
+regle(X?=T,check) :- X \== T, occur_check(X,T),!.
 
 % Orient {?=x}∪P′;S->{x=?t}∪P′;S si t n’est pas une variable
 regle(T?=_,orient) :- nonvar(T),!.
@@ -53,5 +54,31 @@ regle(T?=_,orient) :- nonvar(T),!.
 regle((X ?= T), decompose) :- compound(X), compound(T), functor(X, N1, NB1), functor(T, N2, NB2), N1 == N2, NB1 == NB2,!.
 
 % Clash {f(s,···,s)?=g(t,···,t)}∪P′;S->⊥ si f!=g ou m!=n
-regle((X ?= T), clash) :- compound(X), compound(T), functor(X, N1, NB1), functor(T, N2, NB2), not(N1 == N2), !;
-     not(NB1 == NB2), !.
+regle((X ?= T), clash) :- compound(X), compound(T), functor(X, N1, NB1), functor(T, N2, NB2), (not(N1 == N2) ; not(NB1 == NB2)),!.
+
+
+% reduit(R,E,P,Q) : transforme le système d’équations P en le système d’équations Q par application
+% de la règle de transformation R à l’équation E.
+
+% rename
+reduit(rename,E,P,Q) :- !.
+
+% simplify
+reduit(simplify,E,P,Q) :- !.
+
+% expand
+reduit(expand,E,P,Q) :- !.
+
+% check
+reduit(check,E,P,Q) :- !.
+
+% orient
+reduit(orient,E,P,Q) :- !.
+
+% decompose
+reduit(decompose,E,P,Q) :- !.
+
+% clash
+reduit(clash,E,P,Q) :- !.
+
+

@@ -61,24 +61,30 @@ regle((X ?= T), clash) :- compound(X), compound(T), functor(X, N1, NB1), functor
 % de la règle de transformation R à l’équation E.
 
 % rename
-reduit(rename,E,P,Q) :- !.
+% reduit(rename,X?=Z,[f(X,Y)?=f(X,X),g(X,E)],Q).
+% Est-ce qu'il faut avoir E dans P ?????????????? 
+% Il le faut surement car la regle doit être supprime
+% Si E est dedans on supprime pas E dans les 1eres regles
+reduit(rename, (X ?= T), P, Q) :- regle((X?=T),rename),echo(rename : X = T),nl, X=T, Q=P, !.
 
 % simplify
-reduit(simplify,E,P,Q) :- !.
+% reduit(simplify,Y?=a,[f(X,Y)?=f(X,X)|Y?=a],Q).
+% Avec cette regle on remplace Y par a
+reduit(simplify, (X ?= T), P, Q) :- regle((X?=T),simplify),echo(simplify : X = T),nl, X=T, Q=P, !.
 
 % expand
-reduit(expand,E,P,Q) :- !.
+reduit(expand, (X ?= T), P, Q) :- regle((X?=T),expand),echo(expand : X = T),nl, X=T, Q=P, !.
 
 % check
-reduit(check,E,P,Q) :- !.
+%reduit(check,E,P,Q) :- !.
 
 % orient
-reduit(orient,E,P,Q) :- !.
+%reduit(orient,E,P,Q) :- !.
 
 % decompose
-reduit(decompose,E,P,Q) :- !.
+%reduit(decompose,E,P,Q) :- !.
 
 % clash
-reduit(clash,E,P,Q) :- !.
+%reduit(clash,E,P,Q) :- !.
 
 
